@@ -18,6 +18,12 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [notifications, setNotifications] = useState([]);
+  const [theme, setTheme] = useState(localStorage.getItem('healthai_theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('healthai_theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     if (user && token) {
@@ -125,8 +131,13 @@ export default function App() {
             </h1>
             <p className="breadcrumb">Health AI Platform / {view}</p>
           </div>
-          <div className="notification-pill pulse">
-            <span className="bell">🔔</span> {notifications.length} Alerts
+          <div className="row gap align-center">
+            <button className="small-button secondary theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+              {theme === 'light' ? '🌙 Koyu Tema' : '☀️ Açık Tema'}
+            </button>
+            <div className="notification-pill pulse">
+              <span className="bell">🔔</span> {notifications.length} Alerts
+            </div>
           </div>
         </header>
 

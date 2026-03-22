@@ -63,10 +63,29 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
     }
   }
 
+  const activeCount = posts.filter(p => p.status === 'active').length;
+  const matchCount = posts.filter(p => p.status === 'partner_found').length;
+
   return (
     <section className="grid two-col animate-fade-in">
-      <div className="panel glass">
-        <h2>Search & Filter</h2>
+      <div className="stack">
+        <div className="kpi-grid animate-slide-up">
+          <div className="kpi-card">
+            <span className="kpi-value">{posts.length}</span>
+            <span className="kpi-label">Toplam İlan</span>
+          </div>
+          <div className="kpi-card">
+            <span className="kpi-value">{activeCount}</span>
+            <span className="kpi-label">Aktif İlanlar</span>
+          </div>
+          <div className="kpi-card">
+            <span className="kpi-value">{matchCount}</span>
+            <span className="kpi-label">Eşleşenler</span>
+          </div>
+        </div>
+
+        <div className="panel glass">
+          <h2>Search & Filter</h2>
         <form className="filters" onSubmit={(e) => { e.preventDefault(); applyFilters(); }}>
           <input placeholder="Domain" value={filters.domain} onChange={(e) => setFilters({ ...filters, domain: e.target.value })} />
           <input placeholder="City" value={filters.city} onChange={(e) => setFilters({ ...filters, city: e.target.value })} />
@@ -99,6 +118,7 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
           ))}
           {posts.length === 0 && !loading && <span className="empty-state">No posts found.</span>}
         </div>
+      </div>
       </div>
 
       <div className="panel glass sticky">
