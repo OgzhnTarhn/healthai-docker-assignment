@@ -7,6 +7,22 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
   const [selectedPost, setSelectedPost] = useState(null);
   const [meetingForm, setMeetingForm] = useState({ message: '', proposedTimeSlot: '', ndaAccepted: false });
   const [loading, setLoading] = useState(false);
+  const [sortBy, setSortBy] = useState('newest');
+
+  const getDomainEmoji = (domain) => {
+    if (!domain) return '🔬';
+    const d = domain.toLowerCase();
+    if (d.includes('cardio') || d.includes('kalp')) return '🫀';
+    if (d.includes('neuro') || d.includes('beyin') || d.includes('sinir')) return '🧠';
+    if (d.includes('oncol') || d.includes('kanser')) return '🧬';
+    if (d.includes('ortho') || d.includes('kemik')) return '🦴';
+    if (d.includes('dent') || d.includes('diş')) return '🦷';
+    if (d.includes('eye') || d.includes('göz')) return '👁️';
+    if (d.includes('pedi') || d.includes('çocuk')) return '👶';
+    if (d.includes('ai') || d.includes('yapay') || d.includes('data')) return '🤖';
+    if (d.includes('software') || d.includes('yazılım')) return '💻';
+    return '🔬';
+  };
 
   useEffect(() => {
     loadPosts();
@@ -18,9 +34,13 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
       const params = new URLSearchParams({ ...currentFilters });
       if (user?.id) params.set('userId', user.id);
       const data = await api(`/api/posts?${params.toString()}`, {}, token);
-      setPosts(data);
+      
+      let finalData = data;
+      if (sortBy === 'oldest') finalData = data.reverse();
+      
+      setPosts(finalData);
       if (selectedPost) {
-        const current = data.find((p) => p.id === selectedPost.id);
+        const current = finalData.find((p) => p.id === selectedPost.id);
         if (current) setSelectedPost(current);
       }
     } catch (err) {
@@ -63,6 +83,14 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
     }
   }
 
+  async function handleShare(post) {
+    const text = `${post.title} - ${post.domain} alanında ${post.required_expertise} aranıyor!`;
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(text);
+      onSuccess('İlan detayı panoya kopyalandı! Paylaşabilirsiniz.');
+    }
+  }
+
   const activeCount = posts.filter(p => p.status === 'active').length;
   const matchCount = posts.filter(p => p.status === 'partner_found').length;
 
@@ -98,31 +126,50 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
             <option value="expired">Expired</option>
           </select>
           <input placeholder="Required expertise" value={filters.expertise} onChange={(e) => setFilters({ ...filters, expertise: e.target.value })} />
-          <div className="row gap">
+          <div className="row gap align-center">
+            <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); loadPosts(filters); }} style={{ width: '150px' }}>
+              <option value="newest">En Yeniler</option>
+              <option value="oldest">En Eskiler</option>
+            </select>
             <button type="submit" className="primary-button" disabled={loading}>Apply Filters</button>
             <button type="button" className="secondary" onClick={clearFilters} disabled={loading}>Clear</button>
           </div>
         </form>
 
-        <h3>Post Feed</h3>
+        <h3>İlan Akışı</h3>
         <div className="stack scroll-y">
-          {posts.map((post) => (
-            <button key={post.id} className={`list-card hover-lift ${selectedPost?.id === post.id ? 'selected' : ''}`} onClick={() => setSelectedPost(post)}>
-              <div className="card-header">
-                <strong>{post.title}</strong>
-                <span className={`badge ${post.status}`}>{post.status}</span>
+          {loading && posts.length === 0 ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="list-card">
+                <div className="card-header"><div className="skeleton skeleton-title"></div></div>
+                <div className="skeleton skeleton-text"></div>
+                <div className="skeleton skeleton-text" style={{ width: '80%' }}></div>
               </div>
-              <p className="card-meta">{post.domain} • {post.city} • Needed: {post.required_expertise}</p>
-              <small className="card-owner">Owner: {post.owner_name}</small>
-            </button>
-          ))}
-          {posts.length === 0 && !loading && <span className="empty-state">No posts found.</span>}
+            ))
+          ) : (
+            posts.map((post) => (
+              <button key={post.id} className={`list-card hover-lift ${selectedPost?.id === post.id ? 'selected' : ''}`} onClick={() => setSelectedPost(post)}>
+                <div className="card-header">
+                  <strong>{getDomainEmoji(post.domain)} {post.title}</strong>
+                  <span className={`badge ${post.status}`}>{post.status}</span>
+                </div>
+                <p className="card-meta">{post.domain} • {post.city} • İstenen Uzmanlık: {post.required_expertise}</p>
+                <small className="card-owner">Sahibi: {post.owner_name}</small>
+              </button>
+            ))
+          )}
+          {posts.length === 0 && !loading && <span className="empty-state">Kriterlere uygun ilan bulunamadı.</span>}
         </div>
       </div>
       </div>
 
       <div className="panel glass sticky">
-        <h2>Post Detail</h2>
+        <div className="card-header border-bottom pb-1">
+          <h2>İlan Detayı</h2>
+          {selectedPost && (
+            <button className="small-button outline" onClick={() => handleShare(selectedPost)}>🔗 Paylaş</button>
+          )}
+        </div>
         {selectedPost ? (
           <div className="post-detail animate-slide-up">
             <h3>{selectedPost.title}</h3>
