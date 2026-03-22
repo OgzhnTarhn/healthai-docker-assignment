@@ -67,7 +67,7 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
     <section className="grid two-col animate-fade-in">
       <div className="panel glass">
         <h2>Search & Filter</h2>
-        <div className="filters">
+        <form className="filters" onSubmit={(e) => { e.preventDefault(); applyFilters(); }}>
           <input placeholder="Domain" value={filters.domain} onChange={(e) => setFilters({ ...filters, domain: e.target.value })} />
           <input placeholder="City" value={filters.city} onChange={(e) => setFilters({ ...filters, city: e.target.value })} />
           <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })}>
@@ -80,10 +80,10 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
           </select>
           <input placeholder="Required expertise" value={filters.expertise} onChange={(e) => setFilters({ ...filters, expertise: e.target.value })} />
           <div className="row gap">
-            <button className="primary-button" onClick={applyFilters} disabled={loading}>Apply Filters</button>
-            <button className="secondary" onClick={clearFilters} disabled={loading}>Clear</button>
+            <button type="submit" className="primary-button" disabled={loading}>Apply Filters</button>
+            <button type="button" className="secondary" onClick={clearFilters} disabled={loading}>Clear</button>
           </div>
-        </div>
+        </form>
 
         <h3>Post Feed</h3>
         <div className="stack scroll-y">

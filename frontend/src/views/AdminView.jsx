@@ -80,7 +80,7 @@ export default function AdminView({ token, onSuccess, onError }) {
     <div className="animate-fade-in stack">
       <section className="panel glass">
         <h2>Admin Filters</h2>
-        <div className="filters admin-filters">
+        <form className="filters admin-filters" onSubmit={(e) => { e.preventDefault(); applyAdminFilters(); }}>
           <select value={adminFilters.userRole} onChange={(e) => setAdminFilters({ ...adminFilters, userRole: e.target.value })}>
             <option value="">All user roles</option>
             <option value="admin">Admin</option>
@@ -97,10 +97,10 @@ export default function AdminView({ token, onSuccess, onError }) {
           </select>
           <input placeholder="Filter logs by action" value={adminFilters.logAction} onChange={(e) => setAdminFilters({ ...adminFilters, logAction: e.target.value })} />
           <div className="row gap wrap">
-            <button className="primary-button outline" onClick={applyAdminFilters} disabled={loading}>Apply Filters</button>
-            <button className="secondary" onClick={clearAdminFilters} disabled={loading}>Clear Filters</button>
+            <button type="submit" className="primary-button outline" disabled={loading}>Apply Filters</button>
+            <button type="button" className="secondary" onClick={clearAdminFilters} disabled={loading}>Clear Filters</button>
           </div>
-        </div>
+        </form>
       </section>
 
       <section className="grid three-col">
