@@ -133,7 +133,7 @@ export default function App() {
           </div>
           <div className="row gap align-center">
             <button className="small-button secondary theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-              {theme === 'light' ? '🌙 Koyu Tema' : '☀️ Açık Tema'}
+              {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
             </button>
             <div className="notification-pill pulse">
               <span className="bell">🔔</span> {notifications.length} Alerts

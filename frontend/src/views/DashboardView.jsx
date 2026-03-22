@@ -84,10 +84,10 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
   }
 
   async function handleShare(post) {
-    const text = `${post.title} - ${post.domain} alanında ${post.required_expertise} aranıyor!`;
+    const text = `${post.title} - ${post.domain}, seeking ${post.required_expertise}!`;
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(text);
-      onSuccess('İlan detayı panoya kopyalandı! Paylaşabilirsiniz.');
+      onSuccess('Post details copied to clipboard!');
     }
   }
 
@@ -100,15 +100,15 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
         <div className="kpi-grid animate-slide-up">
           <div className="kpi-card">
             <span className="kpi-value">{posts.length}</span>
-            <span className="kpi-label">Toplam İlan</span>
+            <span className="kpi-label">Total Posts</span>
           </div>
           <div className="kpi-card">
             <span className="kpi-value">{activeCount}</span>
-            <span className="kpi-label">Aktif İlanlar</span>
+            <span className="kpi-label">Active Posts</span>
           </div>
           <div className="kpi-card">
             <span className="kpi-value">{matchCount}</span>
-            <span className="kpi-label">Eşleşenler</span>
+            <span className="kpi-label">Matches Found</span>
           </div>
         </div>
 
@@ -128,15 +128,15 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
           <input placeholder="Required expertise" value={filters.expertise} onChange={(e) => setFilters({ ...filters, expertise: e.target.value })} />
           <div className="row gap align-center">
             <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); loadPosts(filters); }} style={{ width: '150px' }}>
-              <option value="newest">En Yeniler</option>
-              <option value="oldest">En Eskiler</option>
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
             </select>
             <button type="submit" className="primary-button" disabled={loading}>Apply Filters</button>
             <button type="button" className="secondary" onClick={clearFilters} disabled={loading}>Clear</button>
           </div>
         </form>
 
-        <h3>İlan Akışı</h3>
+        <h3>Post Feed</h3>
         <div className="stack scroll-y">
           {loading && posts.length === 0 ? (
             Array.from({ length: 4 }).map((_, i) => (
@@ -153,21 +153,21 @@ export default function DashboardView({ token, user, onSuccess, onError }) {
                   <strong>{getDomainEmoji(post.domain)} {post.title}</strong>
                   <span className={`badge ${post.status}`}>{post.status}</span>
                 </div>
-                <p className="card-meta">{post.domain} • {post.city} • İstenen Uzmanlık: {post.required_expertise}</p>
-                <small className="card-owner">Sahibi: {post.owner_name}</small>
+                <p className="card-meta">{post.domain} • {post.city} • Needed: {post.required_expertise}</p>
+                <small className="card-owner">Owner: {post.owner_name}</small>
               </button>
             ))
           )}
-          {posts.length === 0 && !loading && <span className="empty-state">Kriterlere uygun ilan bulunamadı.</span>}
+          {posts.length === 0 && !loading && <span className="empty-state">No matching posts found.</span>}
         </div>
       </div>
       </div>
 
       <div className="panel glass sticky">
         <div className="card-header border-bottom pb-1">
-          <h2>İlan Detayı</h2>
+          <h2>Post Detail</h2>
           {selectedPost && (
-            <button className="small-button outline" onClick={() => handleShare(selectedPost)}>🔗 Paylaş</button>
+            <button className="small-button outline" onClick={() => handleShare(selectedPost)}>🔗 Share</button>
           )}
         </div>
         {selectedPost ? (

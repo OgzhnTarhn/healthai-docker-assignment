@@ -138,8 +138,8 @@ async function initDb() {
 
     await pool.query(
       `INSERT INTO notifications (user_id, message) VALUES 
-       ($1, 'Senkronizasyon Başarılı: Platforma hoş geldiniz! Eksik profil bilgilerinizi tamamlamayı unutmayın.'),
-       ($2, 'Platforma Hoş Geldiniz! İlan bildirimleri sizin için otomatik ayrıştırılacaktır.')`,
+       ($1, 'Welcome to the Platform! Do not forget to complete your profile settings.'),
+       ($2, 'Welcome to Health AI! Related post notifications will be curated for you.')`,
       [engineer.id, doctor.id]
     );
 
