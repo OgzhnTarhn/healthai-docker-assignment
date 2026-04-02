@@ -1,7 +1,7 @@
 # Health AI - Docker Assignment (SENG 384)
 
-**Student Name:** [Your Name]  
-**Student ID:** [Your ID]  
+**Student Name Oğuzhan Tarhan
+**Student ID: 202228045
 **Course:** SENG 384  
 
 ## Project Overview
